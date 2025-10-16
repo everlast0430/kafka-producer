@@ -1,0 +1,63 @@
+---
+- name: install Confluent Kafka
+  hosts: kafka #kafka broker server 대상
+  tasks:
+    - name: Add Kafka group
+      ansible.builtin.group: #ansible이 가지고 있는 모듈중 group을 사용
+        name: kafka # kafka group을 생성
+        gid: 1001 # group ID
+        system: false # 시스템 그룹은 false -> 일반그룹으로 생성
+      become: yes # 수도권한으로 작업
+
+    - name: Add Kafka user # user 모듈
+      ansible.builtin.user:
+        name: kafka # kafka user 생성
+        shell: /bin/bash # bash 셀을 사용
+        uid: 1001
+        group: kafka
+        groups: ubuntu # 추가적인 group은 ubuntu로 설정
+        comment: User for Kafka Cluster
+      become: yes
+
+    - name: make directory
+      ansible.builtin.file:
+        path: /engine
+        state: directory
+      become: yes
+
+    - name: unarchive file
+      ansible.builtin.unarchive:
+        src: /home/ec2-user/downloads/confluent-community-6.2.14.tar.gz
+        dest: /engine
+        copy: true
+        owner: kafka
+        group: kafka
+      become: yes
+
+    - name: make data directory
+      ansible.builtin.file:
+        path: /data
+        state: directory
+      become: yes
+
+    - name: make data directory
+      ansible.builtin.file:
+        path: /src
+        state: directory
+      become: yes
+
+    - name: create log directory
+      become: yes
+      file:
+        path: /log
+        owner: kafka
+        group: kafka
+        state: directory
+
+    - name: make kafka segment directory
+      ansible.builtin.file:
+        path: /data/kafka-logs
+        state: directory
+        owner: kafka
+        group: kafka
+      become: yes
