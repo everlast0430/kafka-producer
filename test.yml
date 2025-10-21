@@ -12,7 +12,7 @@
     - name: Add Kafka user # user 모듈
       ansible.builtin.user:
         name: kafka # kafka user 생성
-        shell: /bin/bash # bash 셀을 사용
+        shell: /bin/bash # login 셀은 /bin/bash 셀을 사용
         uid: 1001
         group: kafka
         groups: ubuntu # 추가적인 group은 ubuntu로 설정
