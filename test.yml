@@ -87,3 +87,55 @@
       command: # command 모듈을 이용한 한국시간 설정
         cmd: timedatectl set-timezone Asia/Seoul
       become: yes
+
+#-------------------------------- setting_hosts.yml ------------------------------------
+- name: create python env # ansible playbook 이름
+  hosts: kafka # kafka 서버들에서 실행
+  tasks: # 아래에 있는 작업들을 순서대로 진행
+    - name: install pkg for add repository #
+      become: yes # 관리자 권한으로 시작
+      apt:
+        pkg: # 설치할 패키지
+          - software-properties-common # 아래 저장소를 설치하기전 설치할 패키지
+        update_cache: true
+
+    - name: Add repo
+      become: yes
+      apt_repository:
+        repo: ppa:deadsnakes/ppa # python 3.10을 설치하기위한 비공식 레파지토리 # 우분투 공식 레파지토리에는 python 3.10이 없음
+        # sudo add-apt-repository ppa:deadsnakes/ppa
+
+    - name: install python3.10, python3-pip, venv
+      become: true
+      apt:
+        pkg:
+          - python3.10
+          - python3-pip
+          - python3.10-venv
+        update_cache: true
+
+    - name: create python virtual environment # 가상환경 설치
+      become: true
+      command:
+        cmd: python3.10 -m venv /src/kafka_venv
+        creates: /src/kafka_venv
+
+    - name: change owner to kafka
+      become: true
+      file:
+        path: /src/kafka_venv
+        owner: kafka
+        group: kafka
+        recurse: yes
+
+    - name: Modify .bashrc #  가상환경 진입/ 환경변수에 경로하나 추가
+      blockinfile:
+        path: /home/kafka/.bashrc
+        block: |
+          source /src/kafka_venv/bin/activate  
+          export PYTHONPATH="${PYTHONPATH}:/src/kafka-producer" 
+          alias src="cd /src"
+          alias bin="cd /engine/confluent-6.2.14/bin"
+          alias logs="cd /engine/confluent-6.2.14/logs"
+        marker: "# {mark} Setting bashrc"
+      become: yes
