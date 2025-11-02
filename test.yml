@@ -203,8 +203,8 @@
             state: directory # data/zookeeper 디렉토리 생성
           become: yes
 
-        - name: create myid file # myid에 있는 어떤 데이터를 치환해주겠음
-          lineinfile:
+        - name: create myid file # zookeeper 노드마다 고유한 myid 파일이 있어야 함
+          lineinfile: # myid에 있는 어떤 데이터를 치환해주겠음
             path: /data/zookeeper/myid # 주키퍼 노드마다 고유한 숫자값이 있음
             create: yes
             state: present
@@ -226,5 +226,43 @@
             - { regexp: '^server3', line: 'server.3=kafka03:2888:3888' }
           become: yes
 
+#-------------------------------- start_zookeeper-service.yml ------------------------------------
 
-
+---
+- name: Register Zookeeper service as a daemon
+  hosts: kafka
+  tasks:
+    - name: zookeeper.service file
+      blockinfile:
+        path: /etc/systemd/system/zookeeper.service
+        create: yes
+        block: |
+          [Unit]
+          Description=Zookeeper Service
+          After=network.target
+          
+          [Service]
+          Type=forking
+          ExecStart=/engine/apache-zookeeper-3.8.4-bin/bin/zkServer.sh start
+          ExecStop=/engine/apache-zookeeper-3.8.4-bin/bin/zkServer.sh stop
+          ExecReload=/engine/apache-zookeeper-3.8.4-bin/bin/zkServer.sh restart
+          User=zookeeper
+          Group=zookeeper
+          Restart=always
+          
+          [Install]
+          WantedBy=multi-user.target
+        marker: "# {mark} Zookeeper Service"
+      become: yes
+    - name: daemon-reload
+      systemd_service:
+        daemon_reload: yes
+      become: yes
+    - name: Start Zookeeper Service
+      systemd_service:
+        state: started
+        name: zookeeper
+        enabled: true
+      become: yes
+      tags:
+        - start
