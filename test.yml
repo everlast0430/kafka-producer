@@ -140,7 +140,7 @@
         marker: "# {mark} Setting bashrc"
       become: yes
 
-#-------------------------------- setting_hosts.yml ------------------------------------
+#-------------------------------- install_zookeeper.yml ------------------------------------
 
     - name: install Zookeeper
       hosts: kafka
@@ -181,6 +181,50 @@
         name: openjdk-17-jre
         update_cache: true
       become: yes
+
+#-------------------------------- setting_zookeeper.yml ------------------------------------
+    - name: Setting Zookeeper Service
+      hosts: kafka
+      tasks:
+        - name: Copy zoo_sample.cfg to zoo.cfg
+          copy:
+            src: /engine/apache-zookeeper-3.8.4-bin/conf/zoo_sample.cfg
+            dest: /engine/apache-zookeeper-3.8.4-bin/conf/zoo.cfg
+            remote_src: yes # nat서버가 아니라 kafka 서버의 디렉토리에 직접 복사
+            owner: zookeeper
+            group: zookeeper
+          become: yes
+
+        - name: Create zookeeper data directory
+          file:
+            path: /data/zookeeper
+            owner: zookeeper
+            group: zookeeper
+            state: directory # data/zookeeper 디렉토리 생성
+          become: yes
+
+        - name: create myid file # myid에 있는 어떤 데이터를 치환해주겠음
+          lineinfile:
+            path: /data/zookeeper/myid # 주키퍼 노드마다 고유한 숫자값이 있음
+            create: yes
+            state: present
+            owner: zookeeper
+            group: zookeeper
+            regex: '^[0-9]' # 0~9의 값이 있을경우 kafka_broker_no 이 값으로 치환
+            line: '{{ kafka_broker_no }}' #
+          become: yes
+
+        - name: setting zoo.cfg
+          lineinfile:
+            path: /engine/apache-zookeeper-3.8.4-bin/conf/zoo.cfg
+            regex: '{{ item.group }}'
+            line: '{{ item.line }}'
+          loop:
+            - { regexp: '^dataDir', line: 'dataDir=/data/zookeeper' }
+            - { regexp: '^server1', line: 'server.1=kafka01:2888:3888' }
+            - { regexp: '^server2', line: 'server.2=kafka02:2888:3888' }
+            - { regexp: '^server3', line: 'server.3=kafka03:2888:3888' }
+          become: yes
 
 
 
