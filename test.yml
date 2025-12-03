@@ -266,3 +266,57 @@
       become: yes
       tags:
         - start
+
+#-------------------------------- start_kafka-service.yml ------------------------------------
+
+- name: Register kafka service as a daemon
+  hosts: kafka
+  tasks:
+    - name: kafka.service file
+      blockinfile:
+        path: /etc/systemd/system/kafka.service
+        create: yes
+        block: |
+          [Unit]
+          Description=kafka Service
+          After=network.target zookeeper.service
+          
+          [Service]
+          Type=simple
+          WorkingDirectory=/engine/confluent-6.2.14
+          ExecStart=/engine/confluent-6.2.14/bin/kafka-server-start /engine/confluent-6.2.14/etc/kafka/server.properties
+          ExecStop=/engine/confluent-6.2.14/bin/kafka-server-stop
+          User=kafka
+          Group=kafka
+          Restart=always
+          
+          [Install]
+          WantedBy=multi-user.target
+        marker: "# {mark} Kafka Service"
+      become: yes
+    - name: daemon-reload
+      systemd_service:
+        daemon_reload: true
+    - name: Start kafka service
+      systemd_service:
+        state: started
+        name: kafka
+        enabled: true
+
+#-------------------------------- setting_kafka-broker.yml ------------------------------------
+
+    - name: Setting Kafka Broker
+      hosts: kafka
+      tasks:
+        - name: setting kafka server.properties
+          lineinfile:
+            path: /engine/confluent-6.2.14/etc/kafka/server.properties
+            regexp: '{{ item.regexp }}'
+            line: '{{ item.line }}'
+          loop:
+            - { regexp: '^broker\.id', line: 'broker.id={{ kafka_broker_no }}'}
+            - { regexp: '^log\.dirs', line: 'log.dirs=/data/kafka-logs' }
+            - { regexp: '^zookeeper\.connect', line: 'zookeeper.connect=kafka01:2181,kafka02:2181,kafka03:21881' }
+            - { regexp: '^default\.replication\.factor', line: 'default.replication.factor=3'}
+            - { regexp: '^[#]*advertised\.listeners', line: 'advertised.listeners=PLAINTEXT://{{ inventory_hostname }}:9092'}
+          become: yes
