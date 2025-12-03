@@ -314,9 +314,10 @@
             regexp: '{{ item.regexp }}'
             line: '{{ item.line }}'
           loop:
-            - { regexp: '^broker\.id', line: 'broker.id={{ kafka_broker_no }}'}
-            - { regexp: '^log\.dirs', line: 'log.dirs=/data/kafka-logs' }
-            - { regexp: '^zookeeper\.connect', line: 'zookeeper.connect=kafka01:2181,kafka02:2181,kafka03:21881' }
-            - { regexp: '^default\.replication\.factor', line: 'default.replication.factor=3'}
+            - { regexp: '^broker\.id', line: 'broker.id={{ kafka_broker_no }}'} # 몇 번쨰 프로커인지
+            - { regexp: '^log\.dirs', line: 'log.dirs=/data/kafka-logs' } # 어디에 로그를 저장할지
+            - { regexp: '^zookeeper\.connect', line: 'zookeeper.connect=kafka01:2181,kafka02:2181,kafka03:21881' } # 어떤 주키퍼를 연결할 것인지
+            - { regexp: '^default\.replication\.factor', line: 'default.replication.factor=3'} # 복제 기본값
             - { regexp: '^[#]*advertised\.listeners', line: 'advertised.listeners=PLAINTEXT://{{ inventory_hostname }}:9092'}
+            # consumer/producer 와 같은 client가 접근할 떄 보여줄 주소
           become: yes
