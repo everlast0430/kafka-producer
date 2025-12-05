@@ -321,3 +321,5 @@
             - { regexp: '^[#]*advertised\.listeners', line: 'advertised.listeners=PLAINTEXT://{{ inventory_hostname }}:9092'}
             # consumer/producer 와 같은 client가 접근할 떄 보여줄 주소
           become: yes
+
+#-------------------------------- register_producer_as_daemon.yml ------------------------------------
