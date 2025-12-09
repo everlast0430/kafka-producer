@@ -33,7 +33,7 @@ class SimpleProducer:
                     topic=self.topic,
                     key=str(cnt),
                     value=f'hello world: {cnt}',
-                    on_delivery=self.delivery_callback)
+                    on_delivery=self.delivery_callback) # 비동기식 전송
 
             except BufferError:
                 sys.stderr.write('%% Local producer queue is full (%d messages awaiting delivery): try again\n' %
