@@ -44,7 +44,7 @@ class SimpleProducer:
             # NOTE: Since produce() is an asynchronous API this poll() call
             #       will most likely not serve the delivery callback for the
             #       last produce()d message.
-            self.producer.poll(0)
+            self.producer.poll(0) # 비동기식 전송할때는 poll 무조건 사용!!!
             cnt += 1
             time.sleep(1)  # 1초 대기
 
