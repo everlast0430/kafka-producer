@@ -33,7 +33,7 @@ class SimpleProducer:
                     topic=self.topic,
                     key=str(cnt),
                     value=f'hello world: {cnt}',
-                    on_delivery=self.delivery_callback) # 비동기식 전송
+                    on_delivery=self.delivery_callback) # 비동기식 전송할때는 on_delivery 무조건 사용!!!
 
             # 버퍼단위로 메세지를 전송하는데 버퍼(메모리)에 뭔가 문제가 있을 경우
             except BufferError:
