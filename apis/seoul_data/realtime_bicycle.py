@@ -8,7 +8,7 @@ import os
 import  traceback
 
 
-class RealTimeBicycle:
+class RealtimeBicycle:
 
 	def __init__(self, dataset_nm):
 		self.auth_key = '##auth_key_seoul_data##'
@@ -89,3 +89,7 @@ class RealTimeBicycle:
 		logger.addHandler(handler)
 
 		return logger
+
+real_bicycle = RealtimeBicycle(dataset_nm='bikeList')
+items = real_bicycle.call()
+print(items[0:10])
