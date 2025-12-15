@@ -44,4 +44,4 @@ jobs:
       run: aws deploy create-deployment
         --application-name datalake-deploy
         --deployment-group-name kafka-deploy
-        --s3-loca tion bucket=datalake-actions-deploy-jinwoo,bundleType=tgz,key=kafka-producer/kafka-producer.tar.gz
+        --s3-location bucket=datalake-actions-deploy-jinwoo,bundleType=tgz,key=kafka-producer/kafka-producer.tar.gz
