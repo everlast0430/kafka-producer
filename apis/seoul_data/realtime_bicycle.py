@@ -59,16 +59,16 @@ class RealtimeBicycle:
 				end += 1000
 		return total_rows
 
-	def _call_api(self, base_url, start, end, base_df=''):
+	def _call_api(self, base_url, start, end, base_dt=''):
 		headers = {'Content-Type': 'application/json',
 		           'charset': 'utf-8',
-		           'Accept': '*/*',
+		           'Accept': '*/*'
 		           }
-		if len(base_df) > 0:
-			url = f'{base_url}/{start}/{end}/{base_df}'
+		if len(base_dt) > 0:
+			url = f'{base_url}/{start}/{end}/{base_dt}'
 		else:
 			url = f'{base_url}/{start}/{end}'
-		rslt = requests.get(url, headers=headers)
+		rslt = requests.get(url, headers)
 		return rslt
 
 	def chk_dir(self):
