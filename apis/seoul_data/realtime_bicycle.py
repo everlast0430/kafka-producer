@@ -27,7 +27,7 @@ class RealtimeBicycle:
 		while True:
 			try:
 				rslt = self._call_api(base_url, start, end)
-				contents = json.loads(rslt)
+				contents = json.loads(rslt.text)
 			except JSONDecodeError:
 				self.log.error(f'요청 실패, {traceback.format_exc()}')
 				time.sleep(30)
