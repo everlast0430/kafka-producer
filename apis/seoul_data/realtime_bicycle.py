@@ -27,6 +27,7 @@ class RealtimeBicycle:
         while True:
             try:
                 rslt = self._call_api(base_url, start, end)
+                print(base_url)
                 print(rslt)
                 contents = json.loads(rslt.text)
                 print(contents)
