@@ -27,7 +27,9 @@ class RealtimeBicycle:
         while True:
             try:
                 rslt = self._call_api(base_url, start, end)
+                print(rslt)
                 contents = json.loads(rslt.text)
+                print(contents)
             except JSONDecodeError:
                 self.log.error(f'요청 실패, {traceback.format_exc()}')
                 time.sleep(30)  # 30초 대기 후 재시도
