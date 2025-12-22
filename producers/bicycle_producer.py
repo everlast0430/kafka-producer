@@ -45,7 +45,7 @@ class BicycleProducer():
 		rt_bicycle = RealtimeBicycle(dataset_nm='bikeList')
 		while True:
 			now_dt = pendulum.now("Asia/Seoul").strftime('YYYY-MM-DD HH:mm:ss')
-			items = rt_bycicle.call()
+			items = rt_bicycle.call()
 			for item in items:
 				# 컬럼명 변경
 				item['STT_ID'] = item.pop('stationId')
