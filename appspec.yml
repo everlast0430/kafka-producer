@@ -29,7 +29,7 @@ hooks:
     - location: deploy/after_install.sh
       timeout: 120
       runas: kafka
-
+## 데몬으로 등록된 프로그램이 수정/업뎃 되었을때 해당 내용을 적용하기위해 데몬을 restart
   ApplicationStart:
     - location: deploy/application_start.sh
       timeout: 60
