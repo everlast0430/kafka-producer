@@ -59,7 +59,7 @@ class BicycleProducer():
 				# 컬럼 추가
 				item['CRT_DTTM'] = now_dt
 
-				# produce
+				# produce -> 토픽에 전송
 				try:
 					self.producer.produce(
 						topic=self.topic,
