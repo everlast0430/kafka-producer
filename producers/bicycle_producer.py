@@ -60,9 +60,11 @@ class BicycleProducer():
 				item['CRT_DTTM'] = now_dt
 
 				# produce -> 토픽에 전송
+				# 모든 프로듀서가 전송하는 데이터는 최종적으로 broker에 Binary형태로 저장됨
 				try:
 					self.producer.produce(
 						topic=self.topic,
+						# json.dumps 직렬화
 						key=json.dumps({'STT_ID': item['STT_ID'], 'CRT_DTTM': item['CRT_DTTM']}, ensure_ascii=False),
 						value=json.dumps(item, ensure_ascii=False),
 						on_delivery=self.delivery_callback
