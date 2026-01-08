@@ -16,9 +16,15 @@ class BicycleProducer():
 		self.conf = {
 			'bootstrap.servers': BROKER_LST,
 			'compression.type':'lz4',
+			# 압축유형 보통 lz4를 사용함
 			'enable.idempotence': 'true',
+			# 멱등성 보장시킬지 안시킬지
 			'max.in.flight.requests.per.connection': '5',
+			# batch data 갯수
+			# confluent kafka에서는 기본값이 100만이라 5로 설정해야 enable.idempotence가 동작
+			# enable.idempotence가 동작하기위한 그 외 조건들 : retries를 0보다 크게, acks를 all로 지정
 			'acks': 'all'
+			# 리더 파티션 뿐만아니라 팔로우 파티션에도 저장을 할 것인지 팔로우 파티션 갯수는 얼마나 허용할지
 		}
 		self.producer = Producer(self.conf)
 		self._set_logger()
